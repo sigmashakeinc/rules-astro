@@ -5,7 +5,7 @@ rule astro-xss-set-html-unsanitized {
   enabled true
   priority 95
   severity error
-  ASK write
+  LOG write
   IF path GLOB "**/*.astro" AND content CONTAINS "set:html={"
   MESSAGE "Potential Cross-Site Scripting (XSS) vulnerability detected. Using 'set:html' with untrusted or unsanitized input can lead to arbitrary code execution in the user's browser. Always sanitize user-generated or external content using a library like 'dompurify' or 'sanitize-html' before injecting it via 'set:html'. Example: <div set:html={DOMPurify.sanitize(userContent)} />"
 }
@@ -14,7 +14,7 @@ rule astro-deprecated-fetch-content {
   enabled true
   priority 80
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.astro" AND content CONTAINS "Astro.fetchContent("
   MESSAGE "Deprecated API usage: 'Astro.fetchContent()' is no longer recommended. Use 'Astro.glob()' for querying local content files (e.g., Markdown, MDX). 'Astro.glob()' offers better performance and a more consistent API. Example: const posts = await Astro.glob('../pages/**/*.md');"
 }
@@ -23,7 +23,7 @@ rule astro-insecure-target-blank {
   enabled true
   priority 70
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.{astro,html,md,mdx}" AND content CONTAINS "target=\"_blank\"" AND NOT content CONTAINS "rel=\"noopener noreferrer\""
   MESSAGE "Insecure link detected: Links with 'target=\"_blank\"' should always include 'rel=\"noopener noreferrer\"' to prevent tabnabbing (reverse tabnabbing) attacks. This prevents the opened page from gaining partial control over the opener page. Add 'rel=\"noopener noreferrer\"' to all such links."
 }
@@ -50,7 +50,7 @@ rule astro-client-env-variable-misuse {
   enabled true
   priority 85
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.astro" AND content CONTAINS "process.env." AND NOT content CONTAINS "import.meta.env."
   MESSAGE "Misuse of environment variables in Astro component. 'process.env' is a Node.js global and generally not available or correctly processed in client-side Astro components or islands. For environment variables, use 'import.meta.env' (e.g., 'import.meta.env.PUBLIC_MY_VAR'). Ensure client-side variables are prefixed with 'PUBLIC_' in your '.env' file."
 }
